@@ -1,3 +1,4 @@
 .envrc
 *.out
-*.o
+*/target
+**/*.rs.bk
