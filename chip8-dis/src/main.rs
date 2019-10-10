@@ -6,8 +6,7 @@ use std::fs::File;
 use std::io::Read;
 
 fn main() {
-    let file = env::args().skip(1)
-                          .nth(0)
+    let file = env::args().nth(1)
                           .and_then(|path| File::open(path).ok());
 
     if file.is_none() {
