@@ -15,13 +15,19 @@ fn main() {
     }
     
     let file = file.unwrap();
+    let bytes = file.bytes()
+                    .filter_map(Result::ok)
+                    .map(|byte| u8::from_be(byte))
+                    .collect::<Vec<_>>();
+    
+    bytes.chunks(2)
+         .filter(|slice| slice.len() == 2)
+         .map(from_u8s)
+         .for_each(|byte| {
+            println!("{:04X}: {:02X?}", byte, Op::from_bin(byte));
+         });
+}
 
-    file.bytes()
-        .filter_map(Result::ok)
-        .map(|b| (b as u16).swap_bytes())
-        .filter_map(Op::from_bin)
-        .zip(1..)
-        .for_each(|(op, i)| {
-            println!("{:04X}: {:02X?}", i, op);
-        });
+fn from_u8s(slice: &[u8]) -> u16 {
+    (slice[0] as u16) << 8 | slice[1] as u16
 }
