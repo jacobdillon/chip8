@@ -3,6 +3,7 @@ mod chip8;
 use chip8::ops::Op;
 use std::env;
 use std::fs;
+use std::io::Result;
 
 fn main() {
     let path = env::args().nth(1);
@@ -13,11 +14,9 @@ fn main() {
     }
     let path = path.unwrap();
 
-    let bytes = fs::read(&path);
+    let bytes: Result<Vec<_>> = fs::read(&path).map(|vec| vec.iter().map(|&byte| u8::from_be(byte)).collect());
     match bytes {
         Ok(bytes) => {
-            let bytes: Vec<_> = bytes.iter().map(|&byte| u8::from_be(byte)).collect();
-
             bytes.chunks(2)
                 .filter(|slice| slice.len() == 2)
                 .map(from_u8s)
